@@ -1,8 +1,9 @@
 var express = require('express');
-var Car = require('../models/cars');
+var Car = require('../models/car');
+var Bear = require('../models/bear');
 var router = express.Router();
 
-router.get('/',function(req, res){
+router.get('/', function(req, res){
   Car.find(function(err, cars){
   if(err){
     res.send(err);
@@ -11,9 +12,11 @@ router.get('/',function(req, res){
   });
 });
 
-router.post('/',function(req, res){
+router.post('/', async function(req, res){
   var car = new Car();
-  car.name = req.body.name;
+  car.matricula = req.body.matricula;
+  car.dataRegisto = req.body.matricula;
+  car.dono = await Bear.findOne({name: req.body.nomeUrso}).exec();
 
   car.save(function(err){
     if(err){
@@ -23,22 +26,22 @@ router.post('/',function(req, res){
   });
 });
 
-router.get('/:car_id',function(req, res) {
-  Car.findById(req.params.car_id, function(err, car){
+router.get('/', function(req, res){
+  Car.find(function(err, cars){
     if(err){
       res.send(err);
     }
-    res.json(car);
+    res.json(cars);
   });
 });
 
-router.put('/:car_id',function(req, res){
-  Car.findById(req.params.car_id, function(err, car){
+router.put('/',function(req, res){
+  Car.find(function(err, car){
     if(err){
       res.send(err);
     }
     car.name = req.body.name;
-    car.sabe(function(err){
+    car.save(function(err){
       if(err){
         res.send(err);
       }
@@ -47,14 +50,14 @@ router.put('/:car_id',function(req, res){
   });
 });
 
-router.delete('/:car_id', function(req, res){
+router.delete('/', function(req, res){
   Car.removeAllListeners({
     _id: req.params.car_id
   }, function(err, car){
     if(err){
       res.send(err);
     }
-    res.json({message: 'Urso morto com sucesso crl!'});
+    res.json({message: 'Carro destruido com sucesso crl!'});
   });
 });
 
