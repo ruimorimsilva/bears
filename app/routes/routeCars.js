@@ -26,21 +26,48 @@ router.post('/', async function(req, res){
   });
 });
 
-router.get('/', function(req, res){
+/* router.get('/', function(req, res){
   Car.find(function(err, cars){
     if(err){
       res.send(err);
     }
     res.json(cars);
   });
+}); */
+
+router.get('/', async function(req, res){
+  try{
+    const cars = await Car.find().exec();
+    if(cars){
+      var arrayCars = [];
+      for(const car of cars){
+        const dono = await Bear.findById(car.dono).exec();
+        if(dono){
+          var carro = new Object();
+          carro.matricula = car.matricula;
+          carro.dataRegisto = car.dataRegisto;
+          carro.dono = dono;
+          carro.push(arrayCars)
+        }
+      }
+      res.json(arrayCars);
+    }
+  }
+  catch(err){
+    res.send(err);
+  }
 });
+
+
 
 router.put('/',function(req, res){
   Car.find(function(err, car){
     if(err){
       res.send(err);
     }
+
     car.name = req.body.name;
+
     car.save(function(err){
       if(err){
         res.send(err);
